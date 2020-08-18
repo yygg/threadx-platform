@@ -1,0 +1,19 @@
+import txconfig
+Import('TX_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+src = []
+group = []
+
+if GetDepend(['SOC_NUC029xAN']):
+	path          = [cwd + '/inc']
+	src 		 += Glob('src/*.c')
+	# remove retarget.c
+	SrcRemove(src,['src/retarget.c'])
+    	
+	CPPDEFINES = ['NUC029xAN']
+	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')	

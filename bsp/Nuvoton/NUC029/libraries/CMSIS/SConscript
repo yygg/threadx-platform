@@ -1,0 +1,18 @@
+import txconfig
+Import('TX_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+src = []
+group = []
+
+if txconfig.CPU == 'cortex-m0' 		\
+	or txconfig.CPU == 'cortex-m3' 	\
+	or txconfig.CPU == 'cortex-m4' 	:
+	path  = [cwd + '/Include']
+	
+	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+	
+Return('group')
+		

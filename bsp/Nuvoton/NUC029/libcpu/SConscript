@@ -1,0 +1,44 @@
+Import('TX_ROOT')
+Import('txconfig')
+from building import *
+
+cwd  = GetCurrentDir()
+path = cwd + '/'+ txconfig.CPU
+src  = []
+ASFLAGS = ''
+
+# The set of source files associated with this SConscript file.
+if txconfig.PLATFORM == 'armcc':
+    src  += Glob(path + '/keil/src/*.c') + Glob(path + '/keil/src/*.S') 
+    src  += Glob(path + '/keil/example_build/*.c') + Glob(path + '/keil/example_build/*.S') 
+    CPPPATH = [path + '/keil/inc']
+    
+    LIBS    = ['']
+    LIBPATH = ['']
+    
+if txconfig.PLATFORM == 'gcc':
+    src  += Glob(path + '/gnu/src/*.c') + Glob(path + '/gnu/src/*.S') 
+    src  += Glob(path + '/gnu/example_build/*.c') + Glob(path + '/gnu/example_build/*.S') 
+    CPPPATH = [path + '/gnu/inc']
+    
+    LIBS    = ['gcc']
+    LIBPATH = [path + '/gnu/example_build']
+
+if txconfig.PLATFORM == 'iar':
+    src  += Glob(path + '/iar/src/*.c') + Glob(path + '/iar/src/*.S') 
+    CPPPATH = [path + '/iar/inc']
+
+if txconfig.PLATFORM == 'cl':
+    src = Glob(path + '/*.c')
+
+if txconfig.PLATFORM == 'mingw':
+    src = Glob(path + '/*.c')
+
+if txconfig.PLATFORM == 'armcc' and txconfig.ARCH == 'arm' and txconfig.CPU == 'arm926':
+    ASFLAGS = ' --cpreproc'
+    
+CPPDEFINES = ['TX_INCLUDE_USER_DEFINE_FILE']    
+
+group = DefineGroup(txconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS,LIBS = LIBS, LIBPATH=LIBPATH,CPPDEFINES = CPPDEFINES)
+
+Return('group')

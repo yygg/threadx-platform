@@ -1,0 +1,32 @@
+import os
+import sys
+import txconfig
+
+from txconfig import TX_ROOT
+
+sys.path = sys.path + [os.path.join(TX_ROOT, 'tools')]
+from building import *
+
+TARGET = 'threadx.' + txconfig.TARGET_EXT
+
+env = Environment(tools = ['mingw'],
+    AS = txconfig.AS, ASFLAGS = txconfig.AFLAGS,
+    CC = txconfig.CC, CCFLAGS = txconfig.CFLAGS,
+    CXX = txconfig.CC, CXXFLAGS = txconfig.CXXFLAGS,
+    AR = txconfig.AR, ARFLAGS = '-rc',
+    LINK = txconfig.LINK, LINKFLAGS = txconfig.LFLAGS)
+env.PrependENVPath('PATH', txconfig.EXEC_PATH)
+
+Export('TX_ROOT')
+Export('txconfig')
+
+# prepare building environment
+objs = PrepareBuilding(env, TX_ROOT, has_libcpu=True)
+
+# include Packages
+#if os.getenv('PKG_ROOT'):
+#    PKG_ROOT = os.getenv('PKG_ROOT')
+#    objs.extend(SConscript(os.path.join(PKG_ROOT, 'SConscript')))
+    
+# make a building
+DoBuilding(TARGET, objs)

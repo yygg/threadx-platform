@@ -1,0 +1,31 @@
+import txconfig
+Import('TX_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+src = []
+group = []
+
+if GetDepend(['SOC_NU_M451']):
+	DeviceSeries  = 'M451Series'
+	Startupfile   = 'startup_M451Series.s'
+	path          = [cwd + '/Nuvoton/M451Series/Include']	
+
+	# add startup file...
+	if txconfig.CROSS_TOOL == 'gcc':
+		src += Split('Nuvoton/' + DeviceSeries + '/Source/GCC/' + Startupfile)
+	elif txconfig.CROSS_TOOL == 'keil':
+		src += Split('Nuvoton/' + DeviceSeries + '/Source/ARM/' + Startupfile)
+	elif txconfig.CROSS_TOOL == 'iar':
+		src += Split('Nuvoton/' + DeviceSeries + '/Source/IAR/' + Startupfile)
+    	
+	CPPDEFINES = ['NU_M451']
+	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+if GetDepend(['SOC_NUC029xAN']):
+	path       = [cwd + '/Nuvoton/NUC029xAN/Include']	
+	CPPDEFINES = ['NUC029xAN']
+	group      = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')	
